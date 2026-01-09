@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지구 온난화 데이터 분석 보고서 (2020-2024)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F3F4F6; /* Light gray background */
+            color: #1F2937; /* Dark gray text */
+        }
+        
+        /* Chart Container Utilities */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 50vh; /* Responsive height */
+            min-height: 300px;
+            max-height: 400px;
+            margin: 0 auto;
+        }
+
+        /* Custom Scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+    </style>
+
+    <!-- 
+        Palette Selection: "Urgent & High Contrast" (Vibrant)
+        Primary Red: #EF4444 (Tailwind red-500) - For Temperature/Crisis
+        Primary Blue: #3B82F6 (Tailwind blue-500) - For Data/Context
+        Dark Accent: #111827 (Tailwind gray-900) - For CO2/Industrial
+        Warning Orange: #F59E0B (Tailwind amber-500) - For Methane
+        Background: #FFFFFF (White) & #F3F4F6 (Gray-100)
+    -->
+    
+    <!-- 
+        PLAN NARRATIVE:
+        1. Header: Dramatic title introducing the 2020-2024 scope.
+        2. Executive Summary (KPIs): Big numbers showing the total increase in CO2, Methane, and the max Temp.
+        3. The Core Correlation (Dual Axis Chart): Visualizing the parallel rise of CO2 and Temperature, highlighting the 2023 spike.
+        4. Methane Analysis (Bar Chart): Focusing on the steady rise of this potent greenhouse gas.
+        5. The "Great Leap" (Scatter/Bubble): Showing the non-linear jump in 2023.
+        6. Action Plan: 3 Cards based on the report's conclusion.
+        
+        DATA VISUALIZATION CHOICES (NO SVG):
+        1. KPI Cards: Big Text + Unicode Icons. Goal: Inform.
+        2. Combined Trend Chart: Line (Temp) + Bar (CO2) on dual axes. Goal: Relationship/Change. Chart.js.
+        3. Methane Trend: Bar Chart. Goal: Change. Chart.js.
+        4. Correlation Scatter: Scatter Plot. Goal: Relationship. Chart.js.
+    -->
+</head>
+<body class="antialiased selection:bg-red-200 selection:text-red-900">
+
+    <!-- Header Section -->
+    <header class="bg-gray-900 text-white py-12 px-4 shadow-lg">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-black mb-4 leading-tight">
+                <span class="text-red-500">지구 온난화</span> 데이터 리포트
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-light">
+                2020년 - 2024년 온실가스 농도와 기온 변화의 상관관계 분석
+            </p>
+            <div class="mt-8 inline-block bg-gray-800 px-6 py-2 rounded-full border border-gray-700">
+                <span class="text-red-400 font-bold">🚨 Critical Warning:</span> 2023년 기온 급상승 관측
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+
+        <!-- Section 1: Executive Summary (KPIs) -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold border-l-8 border-red-500 pl-4 mb-2">핵심 지표 요약</h2>
+                <p class="text-gray-600">지난 5년간 관측된 주요 기후 지표의 변화량입니다. 모든 지표가 경고 수준을 가리키고 있습니다.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- KPI 1: CO2 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-gray-700 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-600">이산화탄소 ($CO_2$)</h3>
+                        <span class="text-4xl">🏭</span>
+                    </div>
+                    <div class="text-4xl font-black text-gray-800 mb-1">428.0 <span class="text-lg font-normal text-gray-500">ppm</span></div>
+                    <p class="text-sm text-red-600 font-bold">▲ 2.49% (5년 누적)</p>
+                    <p class="text-xs text-gray-400 mt-2">지속적인 화석연료 사용의 결과</p>
+                </div>
+
+                <!-- KPI 2: Methane -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-amber-500 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-600">메탄 ($CH_4$)</h3>
+                        <span class="text-4xl">🐄</span>
+                    </div>
+                    <div class="text-4xl font-black text-gray-800 mb-1">2022 <span class="text-lg font-normal text-gray-500">ppb</span></div>
+                    <p class="text-sm text-amber-600 font-bold">▲ 2.53% (5년 누적)</p>
+                    <p class="text-xs text-gray-400 mt-2">온난화 지수가 높은 위험 기체</p>
+                </div>
+
+                <!-- KPI 3: Temp -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-red-500 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-600">평균 기온</h3>
+                        <span class="text-4xl">🌡️</span>
+                    </div>
+                    <div class="text-4xl font-black text-red-600 mb-1">14.7 <span class="text-lg font-normal text-gray-500">°C</span></div>
+                    <p class="text-sm text-red-600 font-bold">▲ 1.3°C (5년 상승폭)</p>
+                    <p class="text-xs text-gray-400 mt-2">2023년 이후 급격한 상승세</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Main Trend Analysis (Dual Axis) -->
+        <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-4">
+                    <h2 class="text-2xl font-bold text-gray-800">온실가스와 기온의<br><span class="text-red-500">위험한 동행</span></h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        왼쪽 그래프는 지난 5년간 이산화탄소 농도(막대)와 지구 평균 기온(선)의 추이를 보여줍니다.
+                    </p>
+                    <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                        <h4 class="font-bold text-red-700 mb-1">🔍 2023년의 변곡점</h4>
+                        <p class="text-sm text-red-800">
+                            2020~2022년까지 완만하던 기온이 <strong>2023년에 1.0°C 급상승</strong>했습니다. 이는 탄소 축적이 임계점을 넘었거나 엘니뇨 등 외부 요인이 결합된 결과로 해석됩니다.
+                        </p>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <div class="chart-wrapper">
+                        <canvas id="mainTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Methane & Scatter Analysis -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Methane Chart -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <span class="text-amber-500 text-2xl">☁️</span> 메탄 농도 추이
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        이산화탄소보다 강력한 온실효과를 유발하는 메탄도 꾸준히 증가하고 있습니다.
+                    </p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="methaneChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Correlation Scatter Chart -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <span class="text-blue-500 text-2xl">🔗</span> $CO_2$ vs 기온 상관관계
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        $CO_2$ 농도가 높아질수록 기온이 상승하는 강한 <strong>양의 상관관계</strong>를 보여줍니다.
+                    </p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="scatterChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Qualitative Analysis & Recommendations -->
+        <section>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">대응 전략 및 제언</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    데이터는 명확한 위기 신호를 보내고 있습니다. 2023-2024년의 급격한 기온 상승은 즉각적인 행동을 요구합니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Action 1 -->
+                <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 text-white transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-xl font-bold mb-3 text-blue-300">에너지 전환 가속화</h3>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        이산화탄소 농도 억제가 최우선 과제입니다. 화석 연료 의존도를 획기적으로 낮추고 재생 에너지 비중을 높여야 합니다.
+                    </p>
+                </div>
+
+                <!-- Action 2 -->
+                <div class="bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl p-6 text-white transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-4xl mb-4">♻️</div>
+                    <h3 class="text-xl font-bold mb-3 text-yellow-200">메탄 관리 강화</h3>
+                    <p class="text-gray-100 text-sm leading-relaxed">
+                        축산업 및 폐기물 처리 과정에서 발생하는 메탄에 대한 정밀 모니터링 시스템과 규제가 시급합니다.
+                    </p>
+                </div>
+
+                <!-- Action 3 -->
+                <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-6 text-white transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-4xl mb-4">🏗️</div>
+                    <h3 class="text-xl font-bold mb-3 text-red-200">이상 기후 인프라</h3>
+                    <p class="text-gray-100 text-sm leading-relaxed">
+                        1.0°C 급상승과 같은 예측 불가능한 기후 변동에 대비하여, 도시 인프라와 재난 대응 체계를 재설계해야 합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 py-12 border-t border-gray-200 mt-12">
+            <p class="text-sm">데이터 출처: 2020-2024 기후 통계 자료 (사용자 제공)</p>
+            <p class="text-xs mt-2">© 2025 Global Warming Analysis Infographic. Generated by Canvas.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- DATA PREPARATION ---
+        const years = ['2020', '2021', '2022', '2023', '2024'];
+        const co2Data = [417.6, 421.4, 422.8, 425.6, 428.0];
+        const methaneData = [1972, 1988, 2004, 2010, 2022];
+        const tempData = [13.4, 13.5, 13.6, 14.6, 14.7];
+
+        // --- UTILITY: Label Wrapping for Chart.js ---
+        function wrapLabel(label) {
+            const MAX_LENGTH = 16;
+            if (typeof label !== 'string' || label.length <= MAX_LENGTH) return label;
+            
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length <= MAX_LENGTH) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- COMMON CHART CONFIG ---
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                    titleFont: { size: 14, family: "'Noto Sans KR', sans-serif" },
+                    bodyFont: { size: 13, family: "'Noto Sans KR', sans-serif" },
+                    padding: 12,
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        font: { family: "'Noto Sans KR', sans-serif", size: 12 },
+                        usePointStyle: true,
+                    }
+                }
+            }
+        };
+
+        // --- CHART 1: Main Trend (Dual Axis - Line & Bar) ---
+        const ctxMain = document.getElementById('mainTrendChart').getContext('2d');
+        new Chart(ctxMain, {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: '이산화탄소 (ppm)',
+                        data: co2Data,
+                        backgroundColor: 'rgba(17, 24, 39, 0.7)', // Dark Gray
+                        borderColor: 'rgba(17, 24, 39, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y',
+                        order: 2,
+                        borderRadius: 4
+                    },
+                    {
+                        label: '평균 기온 (°C)',
+                        data: tempData,
+                        type: 'line',
+                        borderColor: '#EF4444', // Red 500
+                        backgroundColor: '#EF4444',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#EF4444',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.3, // Curve slightly
+                        yAxisID: 'y1',
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: '이산화탄소 (ppm)' },
+                        min: 410, // Adjust mainly to show variation better
+                        grid: { display: false }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: '기온 (°C)' },
+                        min: 13.0,
+                        max: 15.5,
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: Methane Trend (Bar) ---
+        const ctxMethane = document.getElementById('methaneChart').getContext('2d');
+        new Chart(ctxMethane, {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: '메탄 (ppb)',
+                    data: methaneData,
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)', // Amber 500
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 1950, // Optimize scale to show growth
+                        title: { display: true, text: '농도 (ppb)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: Scatter Plot (CO2 vs Temp) ---
+        // Prepare scatter data format: {x: CO2, y: Temp}
+        const scatterData = co2Data.map((co2, index) => ({
+            x: co2,
+            y: tempData[index]
+        }));
+
+        const ctxScatter = document.getElementById('scatterChart').getContext('2d');
+        new Chart(ctxScatter, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'CO2 농도 vs 기온',
+                    data: scatterData,
+                    backgroundColor: function(context) {
+                        // Highlight 2023 and 2024 with stronger red
+                        const index = context.dataIndex;
+                        return index >= 3 ? '#EF4444' : '#3B82F6';
+                    },
+                    pointRadius: 8,
+                    pointHoverRadius: 10
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `CO2: ${context.raw.x}ppm, 기온: ${context.raw.y}°C`;
+                            }
+                        }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: '이산화탄소 농도 (ppm)' },
+                        min: 415,
+                        max: 430
+                    },
+                    y: {
+                        title: { display: true, text: '평균 기온 (°C)' },
+                        min: 13.0,
+                        max: 15.0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
