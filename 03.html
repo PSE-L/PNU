@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터넷 이용자 추이 분석 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-blue-600 text-2xl"></i>
+                    <span class="font-bold text-xl tracking-tight">DataInsight: Internet 2024</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#summary" class="hover:text-blue-600 transition">개요</a>
+                    <a href="#charts" class="hover:text-blue-600 transition">데이터 시각화</a>
+                    <a href="#forecast" class="hover:text-blue-600 transition">미래 전망</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        
+        <!-- Header Section -->
+        <header id="summary" class="mb-12">
+            <h1 class="text-3xl font-bold text-slate-900 mb-4">2017-2024 인터넷 이용자 추이 보고서</h1>
+            <p class="text-lg text-slate-600 max-w-3xl leading-relaxed">
+                대한민국 인터넷 환경은 지난 7년간 비약적인 성장을 거듭했습니다. 
+                성별 격차의 완화와 고령층의 적극적인 참여로 인해 이제 인터넷은 전 연령대를 아우르는 생활 필수 인프라가 되었습니다.
+            </p>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="p-4 bg-blue-50 text-blue-600 rounded-xl">
+                    <i class="fa-solid fa-users text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500 font-medium">전체 이용자</p>
+                    <p class="text-2xl font-bold text-slate-900">지속 성장 중</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="p-4 bg-purple-50 text-purple-600 rounded-xl">
+                    <i class="fa-solid fa-venus-mars text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500 font-medium">성별 격차</p>
+                    <p class="text-2xl font-bold text-slate-900">역대 최저치</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="p-4 bg-orange-50 text-orange-600 rounded-xl">
+                    <i class="fa-solid fa-arrow-trend-up text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500 font-medium">60대 이상 증가율</p>
+                    <p class="text-2xl font-bold text-slate-900">가파른 상승</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div id="charts" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            
+            <!-- Chart 1: Gender Usage -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900">성별 인터넷 이용자 변화</h3>
+                        <p class="text-sm text-slate-500">2017년 - 2024년 꺾은선 추이</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="genderChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg">
+                    <i class="fa-solid fa-circle-info text-blue-500 mr-2"></i>
+                    남녀 이용자 모두 상승 곡선을 그리며, 특히 여성 이용자의 상승폭이 두드러져 격차가 좁혀지고 있습니다.
+                </p>
+            </div>
+
+            <!-- Chart 2: 60+ Usage -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900">60대 이상 이용자 현황</h3>
+                        <p class="text-sm text-slate-500">연도별 막대 그래프</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="seniorChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg">
+                    <i class="fa-solid fa-circle-info text-orange-500 mr-2"></i>
+                    모바일 접근성 향상으로 인해 실버 세대의 인터넷 참여가 비약적으로 증가하고 있습니다.
+                </p>
+            </div>
+
+            <!-- Chart 3: Total & Rate -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900">전체 이용자 수 및 증감률</h3>
+                        <p class="text-sm text-slate-500">누적 이용자 및 전년 대비 비율</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="totalChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg">
+                    <i class="fa-solid fa-circle-info text-green-500 mr-2"></i>
+                    시장이 포화 상태에 진입함에 따라 증감률은 다소 둔화되지만 총 이용자 수는 계속 경신 중입니다.
+                </p>
+            </div>
+
+            <!-- Chart 4: Forecast -->
+            <div id="forecast" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md border-l-4 border-l-blue-600">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 text-blue-600">향후 이용자 수 예측</h3>
+                        <p class="text-sm text-slate-500">데이터 기반 미래 추이 시뮬레이션</p>
+                    </div>
+                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-bold">PREDICTION</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-slate-600 leading-relaxed bg-blue-50 p-3 rounded-lg">
+                    <i class="fa-solid fa-wand-magic-sparkles text-blue-600 mr-2"></i>
+                    2025년 이후에도 완만한 우상향이 예상되며, 초고령층의 신규 유입이 주요 성장 동력이 될 것입니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- Conclusion Footer -->
+        <footer class="bg-slate-900 text-white p-8 rounded-3xl mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-2xl font-bold mb-4">분석 요약 및 제언</h2>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                            성별 격차 해소로 인한 보편적 서비스화 완료
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                            실버 세대를 타겟으로 한 디지털 리터러시 교육 필수
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                            양적 성장 중심에서 질적 서비스 고도화로의 패러다임 전환
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-right">
+                    <p class="text-slate-400 mb-2 italic">"디지털 포용이 국가 경쟁력입니다."</p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-bold transition shadow-lg shadow-blue-500/30" onclick="window.print()">
+                        <i class="fa-solid fa-file-pdf mr-2"></i>보고서 내보내기
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        const years = ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
+        const futureYears = [...years, '2025(예상)', '2026(예상)'];
+
+        // Gender Chart
+        new Chart(document.getElementById('genderChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    { label: '남성', data: [85, 87, 89, 91, 93, 94, 95, 96], borderColor: '#3b82f6', tension: 0.3 },
+                    { label: '여성', data: [78, 81, 84, 88, 91, 93, 94, 95.5], borderColor: '#a855f7', tension: 0.3 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Senior Chart
+        new Chart(document.getElementById('seniorChart'), {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: '60대 이상 이용자 수 (index)',
+                    data: [35, 42, 55, 68, 79, 85, 91, 94],
+                    backgroundColor: '#f97316'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Total & Rate Chart
+        new Chart(document.getElementById('totalChart'), {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [
+                    { label: '전체 이용자', type: 'bar', data: [88, 91, 93, 95, 97, 98, 98.5, 99], backgroundColor: '#10b981' },
+                    { label: '증감률(%)', type: 'line', data: [4.5, 3.2, 2.5, 2.1, 1.8, 1.2, 0.5, 0.3], borderColor: '#f43f5e', yAxisID: 'y1' }
+                ]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: { y1: { position: 'right', grid: { display: false } } }
+            }
+        });
+
+        // Forecast Chart
+        new Chart(document.getElementById('forecastChart'), {
+            type: 'line',
+            data: {
+                labels: futureYears,
+                datasets: [{
+                    label: '이용자 추이 예측',
+                    data: [88, 91, 93, 95, 97, 98, 98.5, 99, 99.3, 99.5],
+                    borderColor: '#2563eb',
+                    borderDash: [5, 5],
+                    pointBackgroundColor: (context) => context.dataIndex >= 8 ? '#ef4444' : '#2563eb'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    </script>
+</body>
+</html>
