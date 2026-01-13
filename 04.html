@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 전국 문헌정보학과 데이터 포털</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            height: 500px;
+        }
+        .data-table-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Nav -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">📚</span>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500">LIS Portal 2025</span>
+                </div>
+                <div class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="#dashboard" class="hover:text-indigo-600 transition">대시보드</a>
+                    <a href="#list" class="hover:text-indigo-600 transition">대학 리스트</a>
+                    <a href="#analysis" class="hover:text-indigo-600 transition">비교 분석</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">18개 주요 대학 문헌정보학과 분석</h1>
+            <p class="text-slate-500 max-w-3xl mx-auto">경쟁률과 취업률 수치가 모두 보정된 최신 통합 지표 대시보드입니다.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+        <!-- Statistics Overview -->
+        <section id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-indigo-500 uppercase">분석 대상</p>
+                <h3 class="text-2xl font-bold mt-1" id="stat-count">18개교</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-green-500 uppercase">평균 취업률</p>
+                <h3 class="text-2xl font-bold mt-1" id="stat-avg-emp">0%</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-orange-500 uppercase">최고 취업률</p>
+                <h3 class="text-2xl font-bold mt-1" id="stat-max-emp">0%</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-blue-500 uppercase">평균 등록금(연)</p>
+                <h3 class="text-2xl font-bold mt-1" id="stat-avg-tuition">0원</h3>
+            </div>
+        </section>
+
+        <!-- Search & Filter Controls -->
+        <section id="list" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">대학 데이터 리스트</h2>
+                    <p class="text-sm text-slate-500">제공해주신 최신 경쟁률 및 취업률 수치가 완벽히 반영되었습니다.</p>
+                </div>
+                <div class="flex w-full md:w-auto gap-2">
+                    <input type="text" id="searchInput" placeholder="대학명 검색..." class="flex-grow md:w-64 pl-4 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+            </div>
+            <div class="data-table-container">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-white text-slate-500 font-semibold border-b border-slate-100 sticky top-0 z-10">
+                        <tr>
+                            <th class="px-6 py-4">대학명</th>
+                            <th class="px-6 py-4">지역/설립</th>
+                            <th class="px-6 py-4 text-center">경쟁률</th>
+                            <th class="px-6 py-4 text-center text-green-600">취업률</th>
+                            <th class="px-6 py-4 text-right">등록금(년)</th>
+                            <th class="px-6 py-4 text-right">장학금(년)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100">
+                        <!-- JS content -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Comparative Charts -->
+        <section id="analysis" class="space-y-8">
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Employment Rate Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold">대학별 취업률 성과 (%)</h3>
+                            <p class="text-sm text-slate-500">건국대(글로컬) 71.8%로 1위 기록</p>
+                        </div>
+                        <div class="text-xs text-slate-400 font-mono">Unit: %</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="empChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Competition Bar Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold">신입생 경쟁률 순위 (2025)</h3>
+                            <p class="text-sm text-slate-500">서울여대(13.2), 숙명여대/연세대(13.0) 순</p>
+                        </div>
+                        <div class="text-xs text-slate-400 font-mono">Unit: n:1</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="compChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-500 py-12 px-4 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto text-center space-y-4">
+            <p class="text-sm font-semibold tracking-widest uppercase">LIS ANALYTICS HUB 2025</p>
+            <p class="text-[10px] text-slate-700 mt-8">Source: 제공된 최신 통계 수치 기반 (경쟁률 및 취업률 보정 완료)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Updated Dataset with provided Scholarship, Tuition, Competition, and Employment Rates
+        const univData = [
+            { name: "건국대학교(글로컬)", region: "충북", type: "사립", comp: 6.9, emp: 71.8, tuition: 7009368, scholarship: 4684971.1 },
+            { name: "경북대학교", region: "대구", type: "국립", comp: 11.9, emp: 41.7, tuition: 3638000, scholarship: 2875689.3 },
+            { name: "경성대학교", region: "부산", type: "사립", comp: 4.4, emp: 0.0, tuition: 6240000, scholarship: 0.0 },
+            { name: "계명대학교", region: "대구", type: "사립", comp: 6.1, emp: 48.1, tuition: 6535000, scholarship: 4203480.4 },
+            { name: "대진대학교", region: "경기", type: "사립", comp: 5.2, emp: 68.1, tuition: 6751698, scholarship: 4696746.8 },
+            { name: "동의대학교", region: "부산", type: "사립", comp: 4.0, emp: 59.4, tuition: 6146286, scholarship: 4796149.4 },
+            { name: "부산대학교", region: "부산", type: "국립", comp: 9.8, emp: 36.4, tuition: 3560000, scholarship: 3811332.9 },
+            { name: "서울여자대학교", region: "서울", type: "사립", comp: 13.2, emp: 53.1, tuition: 7120394, scholarship: 4804545.3 },
+            { name: "숙명여자대학교", region: "서울", type: "사립", comp: 13.0, emp: 64.7, tuition: 7228606, scholarship: 5579499.4 },
+            { name: "신라대학교", region: "부산", type: "사립", comp: 5.2, emp: 46.7, tuition: 6177000, scholarship: 3461366.8 },
+            { name: "연세대학교", region: "서울", type: "사립", comp: 13.0, emp: 60.7, tuition: 7474750, scholarship: 4894518.9 },
+            { name: "인천대학교", region: "인천", type: "국립", comp: 11.6, emp: 60.6, tuition: 4092000, scholarship: 3681040.2 },
+            { name: "전남대학교", region: "광주", type: "국립", comp: 8.4, emp: 35.7, tuition: 3438000, scholarship: 3315370.5 },
+            { name: "전북대학교", region: "전북", type: "국립", comp: 8.2, emp: 26.7, tuition: 3322000, scholarship: 3361345.2 },
+            { name: "전주대학교", region: "전북", type: "사립", comp: 4.6, emp: 45.5, tuition: 6326000, scholarship: 4221611.1 },
+            { name: "청주대학교", region: "충북", type: "사립", comp: 6.4, emp: 61.1, tuition: 7830143, scholarship: 5155180.3 },
+            { name: "충남대학교", region: "대전", type: "국립", comp: 11.8, emp: 53.8, tuition: 3338000, scholarship: 2525556.0 },
+            { name: "한남대학교", region: "대전", type: "사립", comp: 6.3, emp: 66.7, tuition: 6828529, scholarship: 4471775.7 }
+        ];
+
+        let compChartInstance, empChartInstance;
+
+        function init() {
+            renderTable(univData);
+            updateSummary(univData);
+            renderCharts(univData);
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = univData.filter(u => u.name.includes(term) || u.region.includes(term));
+                renderTable(filtered);
+                renderCharts(filtered);
+            });
+        }
+
+        function updateSummary(data) {
+            if (data.length === 0) return;
+            document.getElementById('stat-count').textContent = data.length + '개교';
+            const avgEmp = (data.reduce((s, c) => s + c.emp, 0) / data.length).toFixed(1);
+            document.getElementById('stat-avg-emp').textContent = avgEmp + '%';
+            const maxEmp = Math.max(...data.map(d => d.emp));
+            document.getElementById('stat-max-emp').textContent = maxEmp.toFixed(1) + '%';
+            const avgTuition = Math.round(data.reduce((s, c) => s + c.tuition, 0) / data.length);
+            document.getElementById('stat-avg-tuition').textContent = (avgTuition).toLocaleString() + '원';
+        }
+
+        function renderTable(data) {
+            const body = document.getElementById('dataTableBody');
+            body.innerHTML = data.map(u => `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-50">
+                    <td class="px-6 py-4 font-bold text-slate-800">${u.name}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-500 mr-1">${u.region}</span>
+                        <span class="text-xs font-semibold px-2 py-1 rounded ${u.type === '국립' ? 'bg-indigo-50 text-indigo-600' : 'bg-orange-50 text-orange-600'}">${u.type}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center font-mono font-bold">${u.comp.toFixed(1)}:1</td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${u.emp > 65 ? 'bg-green-100 text-green-800' : u.emp > 55 ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-700'}">
+                            ${u.emp}%
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right text-slate-500 text-xs">${Math.round(u.tuition).toLocaleString()}원</td>
+                    <td class="px-6 py-4 text-right font-bold text-indigo-600 text-xs">${Math.round(u.scholarship).toLocaleString()}원</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderCharts(data) {
+            const ctx1 = document.getElementById('compChart').getContext('2d');
+            const ctx2 = document.getElementById('empChart').getContext('2d');
+            
+            Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            const sortedByComp = [...data].sort((a, b) => b.comp - a.comp);
+            const sortedByEmp = [...data].sort((a, b) => b.emp - a.emp);
+
+            if(compChartInstance) compChartInstance.destroy();
+            if(empChartInstance) empChartInstance.destroy();
+
+            compChartInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: sortedByComp.map(d => d.name),
+                    datasets: [{
+                        label: '경쟁률',
+                        data: sortedByComp.map(d => d.comp),
+                        backgroundColor: sortedByComp.map(d => d.comp > 12 ? '#4f46e5' : '#e2e8f0'),
+                        borderRadius: 5,
+                        barThickness: 15
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+
+            empChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: sortedByEmp.map(d => d.name),
+                    datasets: [{
+                        label: '취업률',
+                        data: sortedByEmp.map(d => d.emp),
+                        backgroundColor: sortedByEmp.map(d => d.emp > 65 ? '#10b981' : d.emp > 55 ? '#3b82f6' : '#f1f5f9'),
+                        borderRadius: 4,
+                        barThickness: 15
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { max: 100, grid: { color: '#f1f5f9' } },
+                        y: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
